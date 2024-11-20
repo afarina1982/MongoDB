@@ -23,6 +23,7 @@ export class TransaccionesService {
     console.log(transaccionGuardado);
     return TransaccionMapper.schemaToDto(transaccionGuardado);
   }
+
   async registrarTransacciones(bulkTransaccionDto: BulkTransaccionDto) {
     const { rut_usuario, transacciones } = bulkTransaccionDto;
 
@@ -42,7 +43,9 @@ export class TransaccionesService {
     } catch (error) {
       throw new Error(`Error al registrar transacciones: ${error.message}`);
     }
-  }
+}
+
+  
 
 
   findAll() {
