@@ -50,18 +50,14 @@ export class TransaccionesController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.transaccionesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transaccionesService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transaccionesService.remove(+id);
+  @Delete('/transaccion/:id_transaccion')
+  async delete(@Param('id_transaccion') id_transaccion: string): Promise<void> {
+    try {
+      await this.transaccionesService.delete(id_transaccion);
+    } catch (error) {
+      throw new NotFoundException(
+        `No se pudo eliminar la transacción con el ID ${id_transaccion}`,
+      )
+    }
   }
 }

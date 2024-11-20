@@ -8,6 +8,7 @@ import { TransaccionMapper } from './mapper/transacciones.mapper';
 import { GetTransaccioneDto } from './dto/get-transaccione.dto';
 import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';
 import { NotFoundException } from '@nestjs/common';
+import { QueryTransaccioneDto } from './dto/query-transaccione.dto';
 
 
 @Injectable()
@@ -46,12 +47,23 @@ export class TransaccionesService {
     }
   }
 
-  findAll() {
-    return `This action returns all transacciones`;
-  }
+  async getTransacciones(rut_usuario: string, query: QueryTransaccioneDto) {
+    const filters: any = { rut_usuario }; // El usuario solo puede ver sus propias transacciones
 
-  findOne(id: number) {
-    return `This action returns a #${id} transaccione`;
+    // Aplicar los filtros opcionales
+    if (query.categoria) filters.categoria = query.categoria;
+    if (query.montoMenorA) filters.monto = { $lt: query.montoMenorA };
+    if (query.montoMayorA) filters.monto = { ...filters.monto, $gt: query.montoMayorA };
+    if (query.fechaMenorA) filters.fecha = { $lt: query.fechaMenorA };
+    if (query.fechaMayorA) filters.fecha = { ...filters.fecha, $gt: query.fechaMayorA };
+
+    const transacciones = await this.transaccionModel.find(filters).exec();
+
+    if (!transacciones.length) {
+      throw new NotFoundException('No se encontraron transacciones con esos filtros.');
+    }
+
+    return transacciones; // O puedes devolver un DTO mapeado si es necesario
   }
 
   async update(id_transaccion: string, updateTransaccioneDto: UpdateTransaccioneDto): Promise<GetTransaccioneDto> {
@@ -87,7 +99,20 @@ export class TransaccionesService {
   }
   
 
-  remove(id: number) {
-    return `This action removes a #${id} transaccione`;
+  async delete(id_transaccion: string): Promise<void> {
+    // Buscar la transacción por el campo id_transaccion
+    const transaccion = await this.transaccionModel
+      .findOne({ id_transaccion })
+      .exec();
+  
+    if (!transaccion) {
+      throw new NotFoundException(
+        `No se encontró una transacción con el ID ${id_transaccion}`,
+      );
+    }
+  
+    // Eliminar la transacción
+    await this.transaccionModel.deleteOne({ id_transaccion }).exec();
   }
+  
 }
