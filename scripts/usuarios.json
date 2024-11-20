@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "usr01",
+    "nombre": "Juan Pérez",
+    "correo": "juan.perez@example.com",
+    "direccion": {
+      "calle": "Av. Central",
+      "ciudad": "Ciudad A",
+      "codigoPostal": "12345"
+    },
+    "telefono": "123-456-7890",
+    "pedidos": ["ped01", "ped02"]
+  },
+  {
+    "_id": "usr02",
+    "nombre": "Ana López",
+    "correo": "ana.lopez@example.com",
+    "direccion": {
+      "calle": "Calle 5",
+      "ciudad": "Ciudad B",
+      "codigoPostal": "54321"
+    },
+    "telefono": "098-765-4321",
+    "pedidos": ["ped03"]
+  },
+  {
+    "_id": "usr03",
+    "nombre": "Carlos Sánchez",
+    "correo": "carlos.sanchez@example.com",
+    "direccion": {
+      "calle": "Boulevard 7",
+      "ciudad": "Ciudad C",
+      "codigoPostal": "67890"
+    },
+    "telefono": "555-555-5555",
+    "pedidos": ["ped04", "ped05"]
+  }
+]
