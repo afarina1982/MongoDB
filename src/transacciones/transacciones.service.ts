@@ -7,6 +7,7 @@ import { Transaccion } from 'src/odm/schema/transacciones.schema';
 import { TransaccionMapper } from './mapper/transacciones.mapper';
 import { GetTransaccioneDto } from './dto/get-transaccione.dto';
 import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';
+import { NotFoundException } from '@nestjs/common';
 
 
 @Injectable()
@@ -43,10 +44,7 @@ export class TransaccionesService {
     } catch (error) {
       throw new Error(`Error al registrar transacciones: ${error.message}`);
     }
-}
-
-  
-
+  }
 
   findAll() {
     return `This action returns all transacciones`;
@@ -56,9 +54,38 @@ export class TransaccionesService {
     return `This action returns a #${id} transaccione`;
   }
 
-  update(id: number, updateTransaccioneDto: UpdateTransaccioneDto) {
-    return `This action updates a #${id} transaccione`;
+  async update(id_transaccion: string, updateTransaccioneDto: UpdateTransaccioneDto): Promise<GetTransaccioneDto> {
+    // Buscar la transacción por el campo id_transaccion
+    const transaccion = await this.transaccionModel
+      .findOne({ id_transaccion }) // Cambiamos findById por findOne
+      .exec();
+  
+    if (!transaccion) {
+      throw new NotFoundException(
+        `No se encontró una transacción con el ID ${id_transaccion}`,
+      );
+    }
+  
+    // Actualizamos los campos permitidos
+    if (updateTransaccioneDto.monto !== undefined) {
+      transaccion.monto = updateTransaccioneDto.monto;
+    }
+    if (updateTransaccioneDto.fecha !== undefined) {
+      transaccion.fecha = updateTransaccioneDto.fecha;
+    }
+    if (updateTransaccioneDto.categoria !== undefined) {
+      transaccion.categoria = updateTransaccioneDto.categoria;
+    }
+    if (updateTransaccioneDto.descripcion !== undefined) {
+      transaccion.descripcion = updateTransaccioneDto.descripcion;
+    }
+  
+    // Guardar la transacción actualizada
+    const transaccionActualizada = await transaccion.save();
+  
+    return TransaccionMapper.schemaToDto(transaccionActualizada);
   }
+  
 
   remove(id: number) {
     return `This action removes a #${id} transaccione`;
