@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { UsuarioModule } from './usuario/usuario.module';
+import { TransaccionesModule } from './transacciones/transacciones.module';
 
 
 async function bootstrap() {
@@ -13,7 +14,7 @@ async function bootstrap() {
     .addTag('Ejemplos')
     .build();
   const document = SwaggerModule.createDocument(app, config, {
-    include: [UsuarioModule], // OPCIONAL - PARA APLICAR A SOLO ALGUNOS MODULOS
+    include: [UsuarioModule,TransaccionesModule], // OPCIONAL - PARA APLICAR A SOLO ALGUNOS MODULOS
   });
   SwaggerModule.setup('api', app, document);
 

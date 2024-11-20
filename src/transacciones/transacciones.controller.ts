@@ -2,15 +2,27 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TransaccionesService } from './transacciones.service';
 import { CreateTransaccioneDto } from './dto/create-transaccione.dto';
 import { UpdateTransaccioneDto } from './dto/update-transaccione.dto';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { GetTransaccioneDto } from './dto/get-transaccione.dto';
+import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';
 
 @Controller('transacciones')
 export class TransaccionesController {
-  constructor(private readonly transaccionesService: TransaccionesService) {}
-
+  constructor(private readonly transaccionesService: TransaccionesService) { }
+  @ApiBody({ type: CreateTransaccioneDto })
+  @ApiResponse({ status: 201, type: CreateTransaccioneDto })
   @Post()
-  create(@Body() createTransaccioneDto: CreateTransaccioneDto) {
-    return this.transaccionesService.create(createTransaccioneDto);
+  async create(@Body() createTransaccioneDto: CreateTransaccioneDto): Promise<GetTransaccioneDto> {
+    return await this.transaccionesService.create(createTransaccioneDto);
   }
+
+
+  @Post(':bulk')
+  async registrarTransacciones(@Body() bulkTransaccionesDto: BulkTransaccionDto){
+    return await this.transaccionesService.registrarTransacciones(bulkTransaccionesDto);
+  }
+
+
 
   @Get()
   findAll() {
