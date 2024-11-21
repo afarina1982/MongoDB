@@ -6,6 +6,8 @@ import { ApiBody, ApiOkResponse, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { GetTransaccioneDto } from './dto/get-transaccione.dto';
 import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';
 import { NotFoundException } from '@nestjs/common';
+import { FilterTransaccionesDto } from 'src/transacciones/dto/filterTransacciones.dto';
+import { Query } from '@nestjs/common';
 
 @Controller('transacciones')
 export class TransaccionesController {
@@ -20,6 +22,10 @@ export class TransaccionesController {
   @Post(':bulk')
   async registrarTransacciones(@Body() bulkTransaccionesDto: BulkTransaccionDto) {
     return await this.transaccionesService.registrarTransacciones(bulkTransaccionesDto);
+  }
+  @Get()
+  async obtenerTransacciones(@Query() filtros: FilterTransaccionesDto) {
+    return this.transaccionesService.obtenerTransaccionesConFiltros(filtros);
   }
 
   @Patch('/transaccion/:id_transaccion')
@@ -60,4 +66,11 @@ export class TransaccionesController {
       )
     }
   }
+
+  @Get()
+  async obtenerTransaccionesConFiltros(@Query() filtros: FilterTransaccionesDto) {
+    return this.transaccionesService.obtenerTransaccionesConFiltros(filtros);
+  }
+
+
 }
