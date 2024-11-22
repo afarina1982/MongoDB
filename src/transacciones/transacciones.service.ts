@@ -51,15 +51,28 @@ async registrarTransacciones(rut_usuario: string, bulkTransaccionDto: BulkTransa
 
   //================================================================================================
 
-  async update(id_transaccion: string, updateTransaccioneDto: UpdateTransaccioneDto): Promise<Transaccion> {
+  async update(id_transaccion: string, updateTransaccioneDto: UpdateTransaccioneDto, rut_usuario: string): Promise<Transaccion> {
+    // Verificar si el RUT existe en alguna transacción
+    const rutExists = await this.transaccionModel.exists({ rut_usuario });  // Busca si existe el RUT
+    if (!rutExists) {
+      // Si no existe el RUT, lanzamos un error 404
+      throw new NotFoundException(`No existe transacción con el RUT ${rut_usuario}`);
+    }
+
     // Buscar la transacción por ID
     const transaccion = await this.transaccionModel
       .findOne({ id_transaccion }) // Busca la transacción por su ID
       .exec();
-      
+
     if (!transaccion) {
       // Si no se encuentra la transacción, lanzamos un error 404
-      throw new NotFoundException(`No se encontró una transacción con el ID ${id_transaccion}`);
+      throw new NotFoundException(`No se encontró una transacción con el ID ${id_transaccion} para ese rut`);
+    }
+
+    // Verificar si el RUT coincide con el RUT de la transacción
+    if (transaccion.rut_usuario !== rut_usuario) {
+      // Si el RUT no coincide, lanzamos un error 403
+      throw new ForbiddenException('No se puede actualizar la transacción porque no corresponde al RUT del usuario');
     }
 
     // Actualizamos los campos si están presentes en el DTO
@@ -80,7 +93,7 @@ async registrarTransacciones(rut_usuario: string, bulkTransaccionDto: BulkTransa
     const transaccionActualizada = await transaccion.save();
     return transaccionActualizada;  // Retornamos la transacción actualizada
   }
-  
+
 //================================================================================================
 
 async delete(id_transaccion: string, rut_usuario: string): Promise<void> {

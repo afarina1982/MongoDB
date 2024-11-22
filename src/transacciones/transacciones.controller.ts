@@ -38,25 +38,44 @@ export class TransaccionesController {
   @Patch('/transaccion/:id_transaccion')
   @ApiParam({
     name: 'id_transaccion',
-    description: 'Id de la transaccion a actualizar',
+    description: 'ID de la transacción a actualizar',
     required: true,
     type: String,
   })
   @ApiBody({
-    description: 'Datos de la transaccion a actualizar',
+    description: 'Datos de la transacción a actualizar',
     type: UpdateTransaccioneDto,
   })
   @ApiOkResponse({
     description: 'Transacción actualizada correctamente',
     type: GetTransaccioneDto,
   })
+  @ApiResponse({
+    status: 403,
+    description: 'Acceso denegado, falta el header rut_usuario o no corresponde al RUT de la transacción',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transacción no encontrada o RUT no existe en la base de datos',
+  })
+  @ApiHeader({
+    name: 'rut_usuario',  // Especificamos el nombre del header
+    description: 'RUT del usuario propietario de la transacción',
+    required: true,  // Indica que este header es obligatorio
+  })
   async update(
     @Param('id_transaccion') id: string,  // Obtenemos el ID de la transacción
     @Body() updateTransaccioneDto: UpdateTransaccioneDto,  // Datos de la transacción a actualizar
+    @Headers('rut_usuario') rut_usuario: string,  // RUT del usuario en el header
   ): Promise<GetTransaccioneDto> {
+    // Verifica que el rut_usuario esté presente en el header
+    if (!rut_usuario) {
+      throw new ForbiddenException('El RUT del usuario es obligatorio en el header');
+    }
+  
     try {
-      // Llamamos al servicio para realizar la actualización
-      return await this.transaccionesService.update(id, updateTransaccioneDto);
+      // Llama al servicio para realizar la actualización, pasando el rut_usuario como argumento
+      return await this.transaccionesService.update(id, updateTransaccioneDto, rut_usuario);
     } catch (error) {
       // Si la transacción no es encontrada, lanzamos un error 404
       if (error instanceof NotFoundException) {
