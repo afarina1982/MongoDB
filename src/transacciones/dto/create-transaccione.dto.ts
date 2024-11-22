@@ -18,6 +18,4 @@ export class CreateTransaccioneDto {
     @ApiProperty({ description: 'Descripcion de la transaccion', example: 'compra de comida' })
     descripcion: string;
    
-    @ApiProperty({ description: 'Rut del Usuario', example: '12345678-9' })
-    rut_usuario: string;
 }

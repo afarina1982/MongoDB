@@ -1,10 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumber, IsDate } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsDate, Matches } from 'class-validator';
 
 export class FilterTransaccionesDto {
   @ApiPropertyOptional({ description: 'RUT del usuario en formato 11.111.111-1' })
   @IsOptional()
-  @IsString()
+  @Matches(/^\d{1,2}\.\d{3}\.\d{3}\-\d{1}$/, {
+    message: 'El formato de RUT debe ser xx.xxx.xxx-x',
+  })
   rut_usuario?: string;
 
   @ApiPropertyOptional({ description: 'Categoría de la transacción' })

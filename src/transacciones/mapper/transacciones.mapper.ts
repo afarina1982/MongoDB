@@ -3,14 +3,14 @@ import { Transaccion } from "src/odm/schema/transacciones.schema";
 import { GetTransaccioneDto } from "../dto/get-transaccione.dto";
 
 export class TransaccionMapper {
-    static dtoToSchema(dto: CreateTransaccioneDto) :Transaccion{
+    static dtoToSchema(dto: CreateTransaccioneDto, rut_usuario:string) :Transaccion{
         const schema = new Transaccion();
         schema.id_transaccion = dto.id_transaccion;
         schema.monto = dto.monto;
         schema.categoria = dto.categoria;
         schema.fecha = dto.fecha;
         schema.descripcion = dto.descripcion;
-        schema.rut_usuario = dto.rut_usuario;
+        schema.rut_usuario = rut_usuario;
         return schema;
         
     }

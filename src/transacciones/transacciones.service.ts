@@ -19,28 +19,22 @@ export class TransaccionesService {
     @InjectModel(Transaccion.name) private readonly transaccionModel: Model<Transaccion>
   ) { }
 
-
-  async create(createTransaccioneDto: CreateTransaccioneDto): Promise<GetTransaccioneDto> {
-    const transaccion: Transaccion = TransaccionMapper.dtoToSchema(createTransaccioneDto);
+//================================================================================================
+  async create(rut_usuario: string, createTransaccioneDto: CreateTransaccioneDto): Promise<GetTransaccioneDto> {
+    const transaccion: Transaccion = TransaccionMapper.dtoToSchema(createTransaccioneDto, rut_usuario);
     const transaccionGuardado: Transaccion = await this.transaccionModel.create(transaccion);
-    console.log(transaccionGuardado);
     return TransaccionMapper.schemaToDto(transaccionGuardado);
   }
 
+//================================================================================================
   async registrarTransacciones(bulkTransaccionDto: BulkTransaccionDto) {
     const { rut_usuario, transacciones } = bulkTransaccionDto;
-
-    // Mapeamos las transacciones y les añadimos el rut_usuario correctamente
     const transaccionesConUsuario = transacciones.map((transaccion) => ({
-      ...transaccion,  // Asegúrate de que cada transacción tenga todos los campos correctamente
-      rut_usuario,     // Añadimos el rut_usuario aquí para cada transacción
+      ...transaccion,  
+      rut_usuario,     
     }));
-
-    // Verifica que la estructura es correcta antes de la inserción
     console.log('Transacciones con rut añadido:', transaccionesConUsuario);
-
-    try {
-      // Inserta todas las transacciones correctamente formateadas
+    try { 
       const resultado = await this.transaccionModel.insertMany(transaccionesConUsuario);
       return resultado;
     } catch (error) {
@@ -48,19 +42,18 @@ export class TransaccionesService {
     }
   }
 
+  //================================================================================================
+
   async update(id_transaccion: string, updateTransaccioneDto: UpdateTransaccioneDto): Promise<GetTransaccioneDto> {
-    // Buscar la transacción por el campo id_transaccion
+    
     const transaccion = await this.transaccionModel
-      .findOne({ id_transaccion }) // Cambiamos findById por findOne
+      .findOne({ id_transaccion }) 
       .exec();
-  
     if (!transaccion) {
       throw new NotFoundException(
         `No se encontró una transacción con el ID ${id_transaccion}`,
       );
     }
-  
-    // Actualizamos los campos permitidos
     if (updateTransaccioneDto.monto !== undefined) {
       transaccion.monto = updateTransaccioneDto.monto;
     }
@@ -73,16 +66,13 @@ export class TransaccionesService {
     if (updateTransaccioneDto.descripcion !== undefined) {
       transaccion.descripcion = updateTransaccioneDto.descripcion;
     }
-  
-    // Guardar la transacción actualizada
     const transaccionActualizada = await transaccion.save();
-  
     return TransaccionMapper.schemaToDto(transaccionActualizada);
   }
   
+//================================================================================================
 
   async delete(id_transaccion: string): Promise<void> {
-    // Buscar la transacción por el campo id_transaccion
     const transaccion = await this.transaccionModel
       .findOne({ id_transaccion })
       .exec();
@@ -92,34 +82,42 @@ export class TransaccionesService {
         `No se encontró una transacción con el ID ${id_transaccion}`,
       );
     }
-  
-    // Eliminar la transacción
     await this.transaccionModel.deleteOne({ id_transaccion }).exec();
   }
   
-  async obtenerTransaccionesConFiltros(filtros: FilterTransaccionesDto): Promise<Transaccion[]> {
-    const query: any = {};
-  
-    if (filtros.rut_usuario) {
-      query.rut_usuario = filtros.rut_usuario;
-    }
-    if (filtros.categoria) {
-      query.categoria = filtros.categoria;
-    }
-    if (filtros.montoMayorA) {
-      query.monto = { ...query.monto, $gte: filtros.montoMayorA };
-    }
-    if (filtros.montoMenorA) {
-      query.monto = { ...query.monto, $lte: filtros.montoMenorA };
-    }
-    if (filtros.fechaMayorA) {
-      query.fecha = { ...query.fecha, $gte: filtros.fechaMayorA };
-    }
-    if (filtros.fechaMenorA) {
-      query.fecha = { ...query.fecha, $lte: filtros.fechaMenorA };
-    }
-  
-    return this.transaccionModel.find(query).exec();
+//================================================================================================
+
+async obtenerTransaccionesConFiltros(filtros: FilterTransaccionesDto): Promise<Transaccion[]> {
+  const query: any = {};
+
+  // Aseguramos que el rut_usuario esté en los filtros
+  if (filtros.rut_usuario) {
+    query.rut_usuario = filtros.rut_usuario; // Filtro por rut_usuario
   }
+
+  // Otros filtros
+  if (filtros.categoria) {
+    query.categoria = filtros.categoria;
+  }
+  if (filtros.montoMayorA) {
+    query.monto = { ...query.monto, $gte: filtros.montoMayorA };
+  }
+  if (filtros.montoMenorA) {
+    query.monto = { ...query.monto, $lte: filtros.montoMenorA };
+  }
+  if (filtros.fechaMayorA) {
+    query.fecha = { ...query.fecha, $gte: filtros.fechaMayorA };
+  }
+  if (filtros.fechaMenorA) {
+    query.fecha = { ...query.fecha, $lte: filtros.fechaMenorA };
+  }
+
+  // Verificar la consulta antes de ejecutarla
+  console.log('Consulta generada:', query);
+
+  // Realizamos la consulta a la base de datos
+  return this.transaccionModel.find(query).exec();
+}
+
   
 }
