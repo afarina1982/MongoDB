@@ -153,6 +153,6 @@ async obtenerTransaccionesConFiltros(filtros: FilterTransaccionesDto): Promise<T
   // Realizamos la consulta a la base de datos
   return this.transaccionModel.find(query).exec();
 }
-
+ //falta vadidar formato rut
   
 }
