@@ -4,14 +4,7 @@ import { Type } from "class-transformer";
 import { CreateTransaccioneDto } from "./create-transaccione.dto";
 
 export class BulkTransaccionDto {
-   @IsString()
-   @IsNotEmpty()
-   @ApiProperty({ 
-      description: 'Rut del Usuario', 
-      example: '12311231-k'  // Aquí especificas solo el rut_usuario, sin las transacciones
-   })
-   rut_usuario: string;
-
+ 
    @ApiProperty({ 
       description: 'Arreglo de transacciones', 
       type: [CreateTransaccioneDto], 
