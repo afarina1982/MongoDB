@@ -1,5 +1,5 @@
 import { CreateTransaccioneDto } from "../dto/create-transaccione.dto";
-import { Transaccion } from "src/odm/schema/transacciones.schema";
+import { Transaccion } from "src/gestion_de_transacciones/odm/schema/transacciones.schema";
 import { GetTransaccioneDto } from "../dto/get-transaccione.dto";
 
 export class TransaccionMapper {

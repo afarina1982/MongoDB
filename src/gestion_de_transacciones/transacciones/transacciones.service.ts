@@ -3,7 +3,7 @@ import { CreateTransaccioneDto } from './dto/create-transaccione.dto';
 import { UpdateTransaccioneDto } from './dto/update-transaccione.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Transaccion } from 'src/odm/schema/transacciones.schema';
+import { Transaccion } from 'src/gestion_de_transacciones/odm/schema/transacciones.schema';
 import { TransaccionMapper } from './mapper/transacciones.mapper';
 import { GetTransaccioneDto } from './dto/get-transaccione.dto';
 import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';

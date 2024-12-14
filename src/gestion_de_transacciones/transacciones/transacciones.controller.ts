@@ -6,12 +6,12 @@ import { ApiBody, ApiOkResponse, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { GetTransaccioneDto } from './dto/get-transaccione.dto';
 import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';
 import { NotFoundException } from '@nestjs/common';
-import { FilterTransaccionesDto } from 'src/transacciones/dto/filterTransacciones.dto';
+import { FilterTransaccionesDto } from 'src/gestion_de_transacciones/transacciones/dto/filtertransacciones.dto';
 import { Query } from '@nestjs/common';
 import { Headers } from '@nestjs/common';
 import { ForbiddenException } from '@nestjs/common';
 import { ApiHeader } from '@nestjs/swagger';
-import { Transaccion } from 'src/odm/schema/transacciones.schema';
+import { Transaccion } from 'src/gestion_de_transacciones/odm/schema/transacciones.schema';
 
 @Controller('transacciones')
 export class TransaccionesController {
