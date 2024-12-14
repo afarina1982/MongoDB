@@ -1,34 +1,52 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Query, BadRequestException } from '@nestjs/common';
 import { OrmService } from './orm.service';
-import { CreateOrmDto } from './dto/create-orm.dto';
-import { UpdateOrmDto } from './dto/update-orm.dto';
 
-@Controller('orm')
+@Controller('reporte')
 export class OrmController {
   constructor(private readonly ormService: OrmService) {}
 
-  @Post()
-  create(@Body() createOrmDto: CreateOrmDto) {
-    return this.ormService.create(createOrmDto);
+  /**
+   * Endpoint para obtener los reportes mensuales por categoría de un usuario.
+   * @param rutUsuario RUT del usuario.
+   * @returns Lista de reportes mensuales por categoría.
+   */
+  @Get('mensual_categoria/:rut_usuario')
+  async getReporteMensualCategoria(
+    @Param('rut_usuario') rutUsuario: string
+  ) {
+    if (!rutUsuario) {
+      throw new BadRequestException('El RUT del usuario es requerido');
+    }
+    return this.ormService.getReporteMensualCategoria(rutUsuario);
   }
 
-  @Get()
-  findAll() {
-    return this.ormService.findAll();
+  /**
+   * Endpoint para obtener el reporte de gasto promedio diario filtrado por categoría.
+   * @param categoria Categoría a buscar.
+   * @returns Lista de reportes de gasto promedio diario.
+   */
+  @Get('promedio_diario/:categoria')
+  async getReportePromedioDiario(
+    @Param('categoria') categoria: string
+  ) {
+    if (!categoria) {
+      throw new BadRequestException('La categoría es requerida');
+    }
+    return this.ormService.getReportePromedioDiario(categoria);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ormService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrmDto: UpdateOrmDto) {
-    return this.ormService.update(+id, updateOrmDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ormService.remove(+id);
+  /**
+   * Endpoint para obtener el reporte de transacciones por rango de monto para una categoría.
+   * @param categoria Categoría a buscar.
+   * @returns Lista de reportes por rango de monto.
+   */
+  @Get('rango_monto/:categoria')
+  async getReporteRangoMonto(
+    @Param('categoria') categoria: string
+  ) {
+    if (!categoria) {
+      throw new BadRequestException('La categoría es requerida');
+    }
+    return this.ormService.getReporteRangoMonto(categoria);
   }
 }

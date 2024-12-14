@@ -1,11 +1,13 @@
-import { Column, Entity } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
-@Entity({name:'reporte_promedio_diario'})
+@Entity({ name: 'reporte_promedio_diario' })
 export class ReportePromedioDiario {
-    @Column({name:'usuarioid'})
-    public usuarioId: number;
-    @Column({name:'promedioDiario'})
-    public promedioDiario: number;
-    @Column({name:'categoria'})
-    public categoria: string;
+  @PrimaryColumn({ name: 'rut_usuario' })
+  public rut_usuario: string;
+
+  @PrimaryColumn({ name: 'categoria' })
+  public categoria: string;
+
+  @Column({ name: 'promedio_diario' })
+  public promedioDiario: number;
 }
