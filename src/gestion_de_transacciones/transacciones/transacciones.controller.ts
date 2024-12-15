@@ -112,7 +112,7 @@ export class TransaccionesController {
   }
 
   //================================================================================================
-  @Get('reporte/mensual')
+  @Get('reporte/mensual_categoria')
   async generarReporteMensual(@Headers('rut_usuario') rut_usuario: string) {
     if (!rut_usuario) {
       throw new ForbiddenException('El header "rut_usuario" es obligatorio');
@@ -125,6 +125,10 @@ export class TransaccionesController {
   async getReportePorRangoMonto(@Param('categoria') categoria: string) {
     return this.transaccionesService.getReportePorRangoMonto(categoria);
   }
-
+//================================================================================================
+@Get('promedio_diario/:categoria')
+  async getPromedioDiario(@Param('categoria') categoria: string) {
+    return this.transaccionesService.getPromedioDiario(categoria);
+  }
 
 }

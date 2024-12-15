@@ -48,7 +48,9 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
     .apply(RutMiddleware)
-    .exclude({ path: 'transacciones/rango_monto/:categoria',method: RequestMethod.GET })
+    .exclude({ path: 'transacciones/rango_monto/:categoria',method: RequestMethod.GET },
+      { path: 'transacciones/promedio_diario/:categoria',method: RequestMethod.GET }
+    )
     .forRoutes('*');
   }
 }

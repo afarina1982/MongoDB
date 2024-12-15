@@ -14,6 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ReporteMensualCategoria } from 'src/consolidacion_y_generacion_de_reportes/orm/entities/reporte_mensual_categoria.entity';
 import { Repository } from 'typeorm';
 import { ReporteRangoMonto } from 'src/consolidacion_y_generacion_de_reportes/orm/entities/reporte_rango_monto.entity';
+import { ReportePromedioDiario } from 'src/consolidacion_y_generacion_de_reportes/orm/entities/reporte_promedio_diario.entity';
 
 
 
@@ -23,6 +24,8 @@ export class TransaccionesService {
 
   constructor(
     @InjectModel(Transaccion.name) private readonly transaccionModel: Model<Transaccion>,
+    @InjectRepository(ReportePromedioDiario)
+    private readonly reportePromedioDiarioRepository: Repository<ReportePromedioDiario>,
     @InjectRepository(ReporteRangoMonto)
     private readonly reporteRangoMontoRepository: Repository<ReporteRangoMonto>,
     @InjectRepository(ReporteMensualCategoria)
@@ -373,4 +376,60 @@ export class TransaccionesService {
       await this.reporteRangoMontoRepository.save(reporte);
     }
   }
+  //================================================================================================
+  async getPromedioDiario(categoria: string) {
+    const result = await this.transaccionModel.aggregate([
+      { $match: { categoria: categoria } },
+      {
+        $group: {
+          _id: { rut_usuario: '$rut_usuario', fecha: { $substr: ['$fecha', 0, 10] } },
+          totalGasto: { $sum: '$monto' },
+        },
+      },
+      {
+        $group: {
+          _id: '$_id.rut_usuario',
+          totalGasto: { $sum: '$totalGasto' },
+          dias: { $addToSet: '$_id.fecha' },
+        },
+      },
+      {
+        $project: {
+          rut_usuario: '$_id',
+          promedioDiario: {
+            $cond: {
+              if: { $eq: [{ $size: '$dias' }, 0] },
+              then: 0,
+              else: { $divide: ['$totalGasto', { $size: '$dias' }] },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          categoria: categoria,
+        },
+      },
+      { $sort: { rut_usuario: 1 } },
+    ]);
+
+    // Insertar los resultados en MySQL
+    for (const item of result) {
+      const reportePromedioDiario = new ReportePromedioDiario();
+      reportePromedioDiario.rut_usuario = item.rut_usuario;
+      reportePromedioDiario.categoria = item.categoria;
+      reportePromedioDiario.promedioDiario = item.promedioDiario;
+
+      // Guardar en la tabla de MySQL
+      await this.reportePromedioDiarioRepository.save(reportePromedioDiario);
+    }
+
+    // Devolver los resultados
+    return result.map(item => ({
+      rut_usuario: item.rut_usuario,
+      categoria: item.categoria,
+      promedio_diario: item.promedioDiario,
+    }));
+  }
+  
 }
