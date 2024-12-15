@@ -14,6 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReporteMensualCategoria } from './consolidacion_y_generacion_de_reportes/orm/entities/reporte_mensual_categoria.entity';
 import { ReportePromedioDiario } from './consolidacion_y_generacion_de_reportes/orm/entities/reporte_promedio_diario.entity';
 import { ReporteRangoMonto } from './consolidacion_y_generacion_de_reportes/orm/entities/reporte_rango_monto.entity';
+import { RequestMethod } from '@nestjs/common';
 
 @Module({
   imports: [
@@ -45,6 +46,9 @@ import { ReporteRangoMonto } from './consolidacion_y_generacion_de_reportes/orm/
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RutMiddleware).forRoutes('*');
+    consumer
+    .apply(RutMiddleware)
+    .exclude({ path: 'transacciones/rango_monto/:categoria',method: RequestMethod.GET })
+    .forRoutes('*');
   }
 }

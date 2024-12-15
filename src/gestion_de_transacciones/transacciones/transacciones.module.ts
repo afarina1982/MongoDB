@@ -5,10 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Transaccion, TransaccionSchema } from 'src/gestion_de_transacciones/odm/schema/transacciones.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReporteMensualCategoria } from 'src/consolidacion_y_generacion_de_reportes/orm/entities/reporte_mensual_categoria.entity';
+import { ReporteRangoMonto } from 'src/consolidacion_y_generacion_de_reportes/orm/entities/reporte_rango_monto.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ReporteMensualCategoria]),
-  TypeOrmModule.forFeature([Transaccion]),
+  TypeOrmModule.forFeature([Transaccion, ReporteRangoMonto]),
     MongooseModule.forFeature([{
       name: Transaccion.name,
       schema: TransaccionSchema

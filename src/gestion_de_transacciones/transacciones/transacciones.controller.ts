@@ -25,6 +25,7 @@ export class TransaccionesController {
     }
     await this.transaccionesService.registrarTransacciones(rut_usuario, bulkTransaccionesDto);
     await this.transaccionesService.sincronizarReporteMensual(rut_usuario); // Sincroniza el reporte
+    await this.transaccionesService.sincronizarReporteRangoMonto();
     return { message: 'Transacciones registradas y reporte sincronizado.' };
   }
 
@@ -46,6 +47,7 @@ export class TransaccionesController {
     }
     await this.transaccionesService.update(id, updateTransaccioneDto, rut_usuario);
     await this.transaccionesService.sincronizarReporteMensual(rut_usuario);
+    await this.transaccionesService.sincronizarReporteRangoMonto();
   
     return { 
       id_transaccion: id, 
@@ -67,6 +69,7 @@ export class TransaccionesController {
     }
     await this.transaccionesService.delete(id_transaccion, rut_usuario);
     await this.transaccionesService.sincronizarReporteMensual(rut_usuario);
+    await this.transaccionesService.sincronizarReporteRangoMonto();
   
     return { message: 'Transacción eliminada y reporte sincronizado.' };
   }
@@ -104,6 +107,7 @@ export class TransaccionesController {
     }
     const result = await this.transaccionesService.create(rut_usuario, createTransaccioneDto);
     await this.transaccionesService.sincronizarReporteMensual(rut_usuario); // Sincroniza el reporte
+    await this.transaccionesService.sincronizarReporteRangoMonto();
     return result;
   }
 
@@ -115,4 +119,12 @@ export class TransaccionesController {
     }
     return this.transaccionesService.generarReporteMensual(rut_usuario);
   }
+  //================================================================================================
+
+  @Get('rango_monto/:categoria')
+  async getReportePorRangoMonto(@Param('categoria') categoria: string) {
+    return this.transaccionesService.getReportePorRangoMonto(categoria);
+  }
+
+
 }
