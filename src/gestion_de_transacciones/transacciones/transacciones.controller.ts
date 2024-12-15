@@ -161,4 +161,13 @@ async obtenerTransacciones(
     }
     return await this.transaccionesService.create(rut_usuario, createTransaccioneDto);
   }
+  //================================================================================================
+  @Get('reporte/mensual')
+  async generarReporteMensual(@Headers('rut_usuario') rut_usuario: string) {
+    if (!rut_usuario) {
+      throw new ForbiddenException('El header "rut_usuario" es obligatorio');
+    }
+
+    return this.transaccionesService.generarReporteMensual(rut_usuario);
+  }
 }

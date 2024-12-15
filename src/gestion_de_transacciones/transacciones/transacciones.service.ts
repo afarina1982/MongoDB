@@ -10,6 +10,9 @@ import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';
 import { NotFoundException } from '@nestjs/common';
 import { FilterTransaccionesDto } from './dto/filterTransacciones.dto';
 import { ForbiddenException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ReporteMensualCategoria } from 'src/consolidacion_y_generacion_de_reportes/orm/entities/reporte_mensual_categoria.entity';
+import { Repository } from 'typeorm';
 
 
 
@@ -17,9 +20,66 @@ import { ForbiddenException } from '@nestjs/common';
 export class TransaccionesService {
 
   constructor(
-    @InjectModel(Transaccion.name) private readonly transaccionModel: Model<Transaccion>
+    @InjectModel(Transaccion.name) private readonly transaccionModel: Model<Transaccion>,
+    @InjectRepository(ReporteMensualCategoria)
+    private reporteMensualCategoriaRepository: Repository<ReporteMensualCategoria>,
   ) { }
+//================================================================================================
+async generarReporteMensual(rut_usuario: string): Promise<any[]> {
+  const reporteMongo = await this.transaccionModel.aggregate([
+    {
+      $addFields: {
+        fecha: { $toDate: "$fecha" },
+        month: { $month: { date: { $toDate: "$fecha" }, timezone: "America/Santiago" } },
+        year: { $year: { date: { $toDate: "$fecha" }, timezone: "America/Santiago" } }
+      }
+    },
+    {
+      $group: {
+        _id: { categoria: "$categoria", month: "$month", year: "$year", rut_usuario: "$rut_usuario" },
+        total_gasto: { $sum: "$monto" }
+      }
+    },
+    {
+      $project: {
+        categoria: "$_id.categoria",
+        mes: "$_id.month",
+        anio: "$_id.year",  // Asegúrate de incluir 'anio'
+        rut_usuario: "$_id.rut_usuario",
+        total_gasto: 1,
+        _id: 0
+      }
+    }
+  ]);
 
+  // Filtrar por rut_usuario
+  const reporteFiltrado = reporteMongo.filter(
+    (registro) => registro.rut_usuario === rut_usuario,
+  );
+
+  // Insertar los resultados en la base de datos MySQL
+  await this.reporteMensualCategoriaRepository.save(
+    reporteFiltrado.map((registro) => ({
+      rut_usuario: registro.rut_usuario,
+      mes: registro.mes,
+      anio: registro.anio,  // Asegúrate de que 'anio' esté presente
+      categoria: registro.categoria,
+      totalGasto: registro.total_gasto
+    })),
+  );
+
+  // Consulta los reportes insertados, ordenados por año, mes y total_gasto
+  const reporteOrdenado = await this.reporteMensualCategoriaRepository.find({
+    where: { rut_usuario },
+    order: {
+      anio: 'DESC', // Ordenar por año (más reciente primero)
+      mes: 'DESC',  // Ordenar por mes (más reciente primero)
+      totalGasto: 'DESC' // Ordenar por gasto total (mayores primero)
+    }
+  });
+
+  return reporteOrdenado; // Devuelve los reportes ordenados
+}
 //================================================================================================
   async create(rut_usuario: string, createTransaccioneDto: CreateTransaccioneDto): Promise<GetTransaccioneDto> {
     const transaccion: Transaccion = TransaccionMapper.dtoToSchema(createTransaccioneDto, rut_usuario);
@@ -92,6 +152,7 @@ async registrarTransacciones(rut_usuario: string, bulkTransaccionDto: BulkTransa
     // Guardamos la transacción actualizada en la base de datos
     const transaccionActualizada = await transaccion.save();
     return transaccionActualizada;  // Retornamos la transacción actualizada
+
   }
 
 //================================================================================================
