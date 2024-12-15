@@ -11,7 +11,7 @@ async function bootstrap() {
     .setTitle('API example')
     .setDescription('Descripcion de la API')
     .setVersion('1.0')
-    .addTag('Ejemplos')
+    .addTag('Reporte de Transacciones')
     .build();
   const document = SwaggerModule.createDocument(app, config, {
     include: [TransaccionesModule], // OPCIONAL - PARA APLICAR A SOLO ALGUNOS MODULOS

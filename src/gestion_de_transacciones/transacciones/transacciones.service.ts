@@ -215,5 +215,49 @@ async obtenerTransaccionesConFiltros(filtros: FilterTransaccionesDto): Promise<T
   return this.transaccionModel.find(query).exec();
 }
  //falta vadidar formato rut
+ //================================================================================================
+ async sincronizarReporteMensual(rut_usuario: string): Promise<void> {
+  const reporteMongo = await this.transaccionModel.aggregate([
+    {
+      $addFields: {
+        fecha: { $toDate: "$fecha" },
+        month: { $month: { date: { $toDate: "$fecha" }, timezone: "America/Santiago" } },
+        year: { $year: { date: { $toDate: "$fecha" }, timezone: "America/Santiago" } }
+      }
+    },
+    {
+      $group: {
+        _id: { categoria: "$categoria", month: "$month", year: "$year", rut_usuario: "$rut_usuario" },
+        total_gasto: { $sum: "$monto" }
+      }
+    },
+    {
+      $project: {
+        categoria: "$_id.categoria",
+        mes: "$_id.month",
+        anio: "$_id.year",
+        rut_usuario: "$_id.rut_usuario",
+        total_gasto: 1,
+        _id: 0
+      }
+    }
+  ]);
+
+  const reporteFiltrado = reporteMongo.filter(
+    (registro) => registro.rut_usuario === rut_usuario,
+  );
+
+  await this.reporteMensualCategoriaRepository.delete({ rut_usuario });
+
+  await this.reporteMensualCategoriaRepository.save(
+    reporteFiltrado.map((registro) => ({
+      rut_usuario: registro.rut_usuario,
+      mes: registro.mes,
+      anio: registro.anio,
+      categoria: registro.categoria,
+      totalGasto: registro.total_gasto
+    })),
+  );
+}
   
 }
