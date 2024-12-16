@@ -28,11 +28,11 @@ import { RequestMethod } from '@nestjs/common';
     OrmModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST_MYSQL,
-      port: parseInt(process.env.DB_PORT_MYSQL, 10), 
-      username: process.env.DB_USER_MYSQL,
-      password: process.env.DB_PASS_MYSQL,
-      database: process.env.DB_NAME_MYSQL,
+      host: process.env.DB_HOST_MYSQL, // Para Trabajo Local 'localhost',
+      port: parseInt(process.env.DB_PORT_MYSQL, 10), // Para Trabajo Local 3306, 
+      username: process.env.DB_USER_MYSQL, // Para Trabajo Local'root',
+      password: process.env.DB_PASS_MYSQL, // Para Trabajo Local 'clave123',
+      database: process.env.DB_NAME_MYSQL, // Para Trabajo Local 'reportes',
       entities: [
         ReporteMensualCategoria,
         ReportePromedioDiario,
@@ -53,4 +53,5 @@ export class AppModule implements NestModule {
     )
     .forRoutes('*');
   }
+  
 }

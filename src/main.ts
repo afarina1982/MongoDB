@@ -2,11 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { TransaccionesModule } from 'src/gestion_de_transacciones/transacciones/transacciones.module';
+import { ValidationPipe } from '@nestjs/common';
 
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
     .setTitle('API example')
     .setDescription('Descripcion de la API')

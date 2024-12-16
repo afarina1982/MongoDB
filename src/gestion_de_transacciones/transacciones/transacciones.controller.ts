@@ -11,7 +11,7 @@ import { UpdateResultDto } from 'src/gestion_de_transacciones/transacciones/dto/
 
 @Controller('transacciones')
 export class TransaccionesController {
-  constructor(private readonly transaccionesService: TransaccionesService) {}
+  constructor(private readonly transaccionesService: TransaccionesService) { }
 
   //================================================================================================
   @ApiHeader({ name: 'rut_usuario', required: true, description: 'RUT del usuario propietario de las transacciones' })
@@ -48,10 +48,10 @@ export class TransaccionesController {
     await this.transaccionesService.update(id, updateTransaccioneDto, rut_usuario);
     await this.transaccionesService.sincronizarReporteMensual(rut_usuario);
     await this.transaccionesService.sincronizarReporteRangoMonto();
-  
-    return { 
-      id_transaccion: id, 
-      message: 'Transacción actualizada y reporte sincronizado.' 
+
+    return {
+      id_transaccion: id,
+      message: 'Transacción actualizada y reporte sincronizado.'
     };
   }
   //================================================================================================
@@ -70,7 +70,7 @@ export class TransaccionesController {
     await this.transaccionesService.delete(id_transaccion, rut_usuario);
     await this.transaccionesService.sincronizarReporteMensual(rut_usuario);
     await this.transaccionesService.sincronizarReporteRangoMonto();
-  
+
     return { message: 'Transacción eliminada y reporte sincronizado.' };
   }
 
@@ -125,8 +125,8 @@ export class TransaccionesController {
   async getReportePorRangoMonto(@Param('categoria') categoria: string) {
     return this.transaccionesService.getReportePorRangoMonto(categoria);
   }
-//================================================================================================
-@Get('promedio_diario/:categoria')
+  //================================================================================================
+  @Get('promedio_diario/:categoria')
   async getPromedioDiario(@Param('categoria') categoria: string) {
     return this.transaccionesService.getPromedioDiario(categoria);
   }

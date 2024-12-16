@@ -18,11 +18,6 @@ export class OrmService {
     private readonly reporteRangoRepo: Repository<ReporteRangoMonto>,
   ) {}
 
-  /**
-   * Obtiene los reportes mensuales por categoría de un usuario.
-   * @param rutUsuario RUT del usuario a buscar.
-   * @returns Lista de reportes mensuales por categoría.
-   */
   async getReporteMensualCategoria(rutUsuario: string) {
     return this.reporteMensualRepo.find({
       where: { rut_usuario: rutUsuario },
@@ -30,11 +25,6 @@ export class OrmService {
     });
   }
 
-  /**
-   * Obtiene el reporte de gasto promedio diario filtrado por categoría.
-   * @param categoria Categoría a buscar.
-   * @returns Lista de reportes de gasto promedio diario.
-   */
   async getReportePromedioDiario(categoria: string) {
     return this.reportePromedioRepo.find({
       where: { categoria },
@@ -42,11 +32,6 @@ export class OrmService {
     });
   }
 
-  /**
-   * Obtiene el reporte de transacciones por rango de monto para una categoría.
-   * @param categoria Categoría a buscar.
-   * @returns Lista de reportes por rango de monto.
-   */
   async getReporteRangoMonto(categoria: string) {
     return this.reporteRangoRepo.find({
       where: { categoria },
