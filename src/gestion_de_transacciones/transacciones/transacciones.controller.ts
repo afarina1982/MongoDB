@@ -5,7 +5,7 @@ import { UpdateTransaccioneDto } from './dto/update-transaccione.dto';
 import { ApiBody, ApiOkResponse, ApiParam, ApiResponse, ApiHeader } from '@nestjs/swagger';
 import { GetTransaccioneDto } from './dto/get-transaccione.dto';
 import { BulkTransaccionDto } from './dto/bulk-transaccione.dto';
-import { FilterTransaccionesDto } from 'src/gestion_de_transacciones/transacciones/dto/filtertransacciones.dto';
+import { FilterTransaccionesDto } from 'src/gestion_de_transacciones/transacciones/dto/filterTransacciones.dto';
 import { Transaccion } from 'src/gestion_de_transacciones/odm/schema/transacciones.schema';
 import { UpdateResultDto } from 'src/gestion_de_transacciones/transacciones/dto/updateResult.dto';
 

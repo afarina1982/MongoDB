@@ -28,11 +28,11 @@ import { RequestMethod } from '@nestjs/common';
     OrmModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',  // Puedes usar tus variables de entorno process.env.DB_HOST
-      port: 5100, //parseInt(process.env.DB_PORT, 10),
-      username: 'root', //process.env.DB_USER,
-      password: 'clave123',//process.env.DB_PASS,
-      database: 'reportes', //process.env.DB_NAME,
+      host: process.env.DB_HOST_MYSQL,
+      port: parseInt(process.env.DB_PORT_MYSQL, 10), 
+      username: process.env.DB_USER_MYSQL,
+      password: process.env.DB_PASS_MYSQL,
+      database: process.env.DB_NAME_MYSQL,
       entities: [
         ReporteMensualCategoria,
         ReportePromedioDiario,

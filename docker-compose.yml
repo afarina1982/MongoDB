@@ -7,10 +7,15 @@ services:
     environment:
       - PORT=${PUERTO_NEST}
       - DB_HOST=${RUTA_DB}
+      - DB_HOST_MYSQL=${DB_MYSQL_RUTA}
       - DB_PORT=${PUERTO_DB}
+      - DB_PORT_MYSQL=${DB_MYSQL_PORT}
       - DB_USER=${USUARIO_DB}
+      - DB_USER_MYSQL=${DB_MYSQL_USER}
       - DB_PASS=${CLAVE_DB}
+      - DB_PASS_MYSQL=${DB_MYSQL_PASS_ROOT}
       - DB_NAME=${NOMBRE_DB}
+      - DB_NAME_MYSQL=${DB_MYSQL_NAME}
     ports:
       - "3000:${PUERTO_NEST}"
     volumes:
@@ -24,7 +29,7 @@ services:
     volumes:
       - ./db/data_dev:/var/lib/mysql
     ports:
-      - "5100:${DB_MYSQL_PORT}"
+      - "3306:${DB_MYSQL_PORT}"
 
   mongo:
     image: mongo:${VERSION_DB}
